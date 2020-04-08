@@ -1,10 +1,8 @@
 package com.bjw.ComAssistant;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -15,7 +13,6 @@ import com.bjw.bean.ComBean;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.KeyListener;
@@ -84,29 +81,12 @@ public class ComAssistantActivity extends Activity {
 		CloseComPort(ComD);
 		super.onDestroy();
 	}
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		CloseComPort(ComA);
-		CloseComPort(ComB);
-		CloseComPort(ComC);
-		CloseComPort(ComD);
-		setContentView(R.layout.main);
-		setControls();
-	}
+
 
 	//----------------------------------------------------
 	private void setControls()
 	{
 		String appName = "卡得智能门禁模块调试工具V2.0";
-//		try {
-//			PackageInfo pinfo = getPackageManager().getPackageInfo("com.bjw.ComAssistant", PackageManager.GET_CONFIGURATIONS);
-//			String versionName = pinfo.versionName;
-////			String versionCode = String.valueOf(pinfo.versionCode);
-//			setTitle(appName);
-//		} catch (NameNotFoundException e) {
-//			e.printStackTrace();
-//		}
 		mLinearLayout  =(LinearLayout)findViewById(R.id.id_layout);
 		editTextRecDisp=(TextView) findViewById(R.id.editTextRecDisp);
 		editTextLines=(EditText)findViewById(R.id.editTextLines);
@@ -161,10 +141,7 @@ public class ComAssistantActivity extends Activity {
 
 		radioButtonTxt.setOnClickListener(new radioButtonClickEvent());
 		radioButtonHex.setOnClickListener(new radioButtonClickEvent());
-//		ButtonClear.setOnClickListener(new ButtonClickEvent());
-//		ButtonSendCOMA.setOnClickListener(new ButtonClickEvent());
-//		ButtonSendCOMB.setOnClickListener(new ButtonClickEvent());
-//		ButtonSendCOMC.setOnClickListener(new ButtonClickEvent());
+
 		toggleButtonCOMA.setOnCheckedChangeListener(new ToggleButtonCheckedChangeEvent());
 		toggleButtonCOMB.setOnCheckedChangeListener(new ToggleButtonCheckedChangeEvent());
 		toggleButtonCOMC.setOnCheckedChangeListener(new ToggleButtonCheckedChangeEvent());
@@ -214,14 +191,7 @@ public class ComAssistantActivity extends Activity {
 		{
 			SpinnerCOMD.setSelection(4);
 		}
-		SpinnerCOMA.setOnItemSelectedListener(new ItemSelectedEvent());
-		SpinnerCOMB.setOnItemSelectedListener(new ItemSelectedEvent());
-		SpinnerCOMC.setOnItemSelectedListener(new ItemSelectedEvent());
-		SpinnerCOMD.setOnItemSelectedListener(new ItemSelectedEvent());
-		SpinnerBaudRateCOMA.setOnItemSelectedListener(new ItemSelectedEvent());
-		SpinnerBaudRateCOMB.setOnItemSelectedListener(new ItemSelectedEvent());
-		SpinnerBaudRateCOMC.setOnItemSelectedListener(new ItemSelectedEvent());
-		SpinnerBaudRateCOMD.setOnItemSelectedListener(new ItemSelectedEvent());
+
 		KeyListener HexkeyListener = new NumberKeyListener()
 		{
 			public int getInputType()
@@ -242,37 +212,7 @@ public class ComAssistantActivity extends Activity {
 		AssistData.setTxtMode(false);
 		DispAssistData(AssistData);
 	}
-	//----------------------------------------------------串口号或波特率变化时，关闭打开的串口
-	class ItemSelectedEvent implements Spinner.OnItemSelectedListener{
-		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-		{
-			if ((arg0 == SpinnerCOMA) || (arg0 == SpinnerBaudRateCOMA))
-			{
-				CloseComPort(ComA);
-				checkBoxAutoCOMA.setChecked(false);
-				toggleButtonCOMA.setChecked(false);
-			}else if ((arg0 == SpinnerCOMB) || (arg0 == SpinnerBaudRateCOMB))
-			{
-				CloseComPort(ComB);
-				checkBoxAutoCOMA.setChecked(false);
-				toggleButtonCOMB.setChecked(false);
-			}else if ((arg0 == SpinnerCOMC) || (arg0 == SpinnerBaudRateCOMC))
-			{
-				CloseComPort(ComC);
-				checkBoxAutoCOMA.setChecked(false);
-				toggleButtonCOMC.setChecked(false);
-			}else if ((arg0 == SpinnerCOMD) || (arg0 == SpinnerBaudRateCOMD))
-			{
-				CloseComPort(ComD);
-				checkBoxAutoCOMA.setChecked(false);
-				toggleButtonCOMD.setChecked(false);
-			}
-		}
 
-		public void onNothingSelected(AdapterView<?> arg0)
-		{}
-
-	}
 	//----------------------------------------------------编辑框焦点转移事件
 	class FocusChangeEvent implements EditText.OnFocusChangeListener{
 		public void onFocusChange(View v, boolean hasFocus)
@@ -334,15 +274,6 @@ public class ComAssistantActivity extends Activity {
 	class radioButtonClickEvent implements RadioButton.OnClickListener{
 		public void onClick(View v)
 		{
-//			if (v==radioButtonTxt)
-//			{
-//				KeyListener TxtkeyListener = new TextKeyListener(Capitalize.NONE, false);
-//				editTextCOMA.setKeyListener(TxtkeyListener);
-//				editTextCOMB.setKeyListener(TxtkeyListener);
-//				editTextCOMC.setKeyListener(TxtkeyListener);
-//				editTextCOMD.setKeyListener(TxtkeyListener);
-//				AssistData.setTxtMode(true);
-//			}else if (v==radioButtonHex) {
 			KeyListener HexkeyListener = new NumberKeyListener()
 			{
 				public int getInputType()
@@ -516,10 +447,6 @@ public class ComAssistantActivity extends Activity {
 	}
 	//----------------------------------------------------串口控制类
 	private class SerialControl extends SerialHelper{
-
-		//		public SerialControl(String sPort, String sBaudRate){
-//			super(sPort, sBaudRate);
-//		}
 		public SerialControl(){
 		}
 
@@ -531,14 +458,6 @@ public class ComAssistantActivity extends Activity {
 			//用线程定时刷新显示可以获得较流畅的显示效果，但是接收数据速度快于显示速度时，显示会滞后。
 			//最终效果差不多-_-，线程定时刷新稍好一些。
 			DispQueue.AddQueue(ComRecData);//线程定时刷新显示(推荐)
-//			Log.i(TAG, "onDataReceived: ");
-//			runOnUiThread(new Runnable()//直接刷新显示
-//			{
-//				public void run()
-//				{
-//					DispRecData(ComRecData);
-//				}
-//			});
 		}
 	}
 	//----------------------------------------------------刷新显示线程
